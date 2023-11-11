@@ -22,7 +22,7 @@ def getUser(username: str):
 
     print(resp.json())
 
-    return "MEH"
+    return resp.json()
 
 def registerUser(username: str, name: str, password: str):
     ps = __getPasswordHash(password)
@@ -31,6 +31,4 @@ def registerUser(username: str, name: str, password: str):
 
     resp = requests.post(f"http://{ACTIVE_REPLICATOR_HOST}:8080/run", json={"com": com})
 
-    print(resp.json())
-
-    return "SS"
+    return "SUCCESS"

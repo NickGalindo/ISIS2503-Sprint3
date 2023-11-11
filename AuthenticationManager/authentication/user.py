@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from passlib.context import CryptContext
 
 import requests
@@ -31,4 +32,4 @@ def registerUser(username: str, name: str, password: str):
 
     requests.post(f"http://{ACTIVE_REPLICATOR_HOST}:8080/run", json={"com": com})
 
-    return "SUCCESS"
+    return HttpResponse(status=200)

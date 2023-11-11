@@ -19,4 +19,4 @@ def register(request: Any):
 
     r = user.registerUser(body_data["username"], body_data["name"], body_data["password"])
 
-    return "SUCCESS"
+    return r

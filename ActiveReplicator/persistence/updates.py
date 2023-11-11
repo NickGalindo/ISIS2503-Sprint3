@@ -22,6 +22,8 @@ async def run(redundantPool: ThreadedConnectionPool, basePool: ThreadedConnectio
         print(Fore.RED + "ERROR: Failed to execute on base database, falling back to redundant database")
         print(e)
 
+    return None
+
     try:
         assert(isinstance(redundantPool, ThreadedConnectionPool))
 

@@ -3,7 +3,7 @@ from mysql.connector.pooling import MySQLConnectionPool
 
 from colorama import Fore
 
-async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool, com: str):
+async def query(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool, com: str):
     result = None
 
     try:
@@ -15,12 +15,10 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
-        db_connection.commit()
-
         db_cursor.close()
         db_connection.close()
 
-        print(result)
+        return result
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on base database, falling back to redundant database")
         print(e)
@@ -35,12 +33,10 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
-        db_connection.commit()
-
         db_cursor.close()
         db_connection.close()
 
-        print(result)
+        return result
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on redundant database, no connection open")
         print(e)
@@ -49,5 +45,3 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
             detail="Could not establish any valid connection with database",
             headers={"WWW-Authenticate": "Bearer"}
         )
-
-    return "Success"

@@ -16,6 +16,8 @@ def __getPasswordHash(password):
 def getUser(username: str):
     q = f"SELECT auth.users.username, auth.users.password WHERE auth.users.username = '{username}';"
 
+    print("ssssssss")
+
     resp = requests.post(f"http://{QUERY_BALANCER_HOST}:8080/query", data={"q": q})
 
     print(resp.json())

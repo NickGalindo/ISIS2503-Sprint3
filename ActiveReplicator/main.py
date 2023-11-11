@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from psycopg2.pool import ThreadedConnectionPool
 import colorama
 
-from . import endpoints
+import endpoints
 
 colorama.init(autoreset=True)
 

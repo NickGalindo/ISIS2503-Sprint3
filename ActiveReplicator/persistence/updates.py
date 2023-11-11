@@ -20,6 +20,7 @@ async def run(redundantPool: ThreadedConnectionPool, basePool: ThreadedConnectio
         basePool.putconn(db_connection)
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on base database, falling back to redundant database")
+        print(e)
 
     try:
         assert(isinstance(redundantPool, ThreadedConnectionPool))
@@ -35,6 +36,7 @@ async def run(redundantPool: ThreadedConnectionPool, basePool: ThreadedConnectio
         redundantPool.putconn(db_connection)
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on redundant database, no connection open")
+        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not establish any valid connection with database",

@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
             port=CONFIG["DB_PORT"],
             database="auth"
         )
-        print(colorama.Fore.RED + "SUCCESS: Established connection with base database")
+        print(colorama.Fore.GREEN + "SUCCESS: Established connection with base database")
     except Exception as e:
         app.state.baseConnectionPool = None
         print(colorama.Fore.RED + "ERROR: Failed to establish connection pool with base database, falling back on redundant database")
@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
             port=CONFIG["DB_PORT"],
             database="auth"
         )
-        print(colorama.Fore.RED + "SUCCESS: Established connection with redundant database")
+        print(colorama.Fore.GREEN + "SUCCESS: Established connection with redundant database")
     except Exception as e:
         app.state.redundantConnectionPool = None
         print(colorama.Fore.RED + "ERROR: Failed to establish connection pool with redundant database")

@@ -10,4 +10,5 @@ router = APIRouter()
 
 @router.post("/query")
 async def query(request: Request, q: Qry):
+    print(q.q)
     return await queries.query(request.app.state.redundantConnectionPool, request.app.state.baseConnectionPool, q.q)

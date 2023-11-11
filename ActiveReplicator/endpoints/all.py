@@ -1,15 +1,13 @@
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
-class User(BaseModel):
-    username: str
-    name: str
-    password: str
-
 from persistence import updates
+
+class Stuff(BaseModel):
+    com: str
 
 router = APIRouter()
 
 @router.post("/run")
-async def run(request: Request, com: str):
-    return await updates.run(request.app.state.redundantConnectionPool, request.app.state.baseConnectionPool, com)
+async def run(request: Request, com: Stuff):
+    return await updates.run(request.app.state.redundantConnectionPool, request.app.state.baseConnectionPool, com.com)

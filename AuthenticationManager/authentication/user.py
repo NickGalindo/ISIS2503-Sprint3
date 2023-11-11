@@ -27,7 +27,7 @@ def getUser(username: str):
 def registerUser(username: str, name: str, password: str):
     ps = __getPasswordHash(password)
     
-    com = f"INSERT INTO users (username, name, password) VALUES ({username}, {name}, {ps});"
+    com = f"INSERT INTO users (username, name, password) VALUES ('{username}', '{name}', '{ps}');"
 
     resp = requests.post(f"http://{ACTIVE_REPLICATOR_HOST}:8080/run", json={"com": com})
 

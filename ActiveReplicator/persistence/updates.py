@@ -15,6 +15,8 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
+        db_connection.commit()
+
         db_cursor.close()
         db_connection.close()
 
@@ -32,6 +34,8 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
 
         db_cursor.execute(com)
         result = db_cursor.fetchall()
+
+        db_connection.commit()
 
         db_cursor.close()
         db_connection.close()

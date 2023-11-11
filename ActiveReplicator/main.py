@@ -18,6 +18,7 @@ async def lifespan(app: FastAPI):
             host=CONFIG["DB_HOST"],
             user=CONFIG["DB_USER"],
             password=CONFIG["DB_PASSWORD"],
+            database="auth",
             pool_name="base_pool",
             pool_size=8
         )
@@ -32,6 +33,7 @@ async def lifespan(app: FastAPI):
             host=CONFIG["REDUNDANT_HOST"],
             user=CONFIG["REDUNDANT_USER"],
             password=CONFIG["REDUNDANT_PASSWORD"],
+            database="auth",
             pool_name="redundant_pool",
             pool_size=8
         )

@@ -14,7 +14,7 @@ def __getPasswordHash(password):
     return PWD_CONTEXT.hash(password)
 
 def getUser(username: str):
-    q = f"SELECT auth.users.username, auth.users.password WHERE auth.users.username = '{username}';"
+    q = f"SELECT users.username, users.password WHERE users.username = '{username}';"
 
     print("ssssssss")
 

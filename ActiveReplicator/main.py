@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from psycopg2.pool import ThreadedConnectionPool
+from mysql.connector.pooling import MySQLConnectionPool
 import colorama
 
 import endpoints
@@ -14,14 +14,12 @@ colorama.init(autoreset=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        app.state.baseConnectionPool = ThreadedConnectionPool(
-            1,
-            8,
+        app.state.baseConnectionPool = MySQLConnectionPool(
+            host=CONFIG["DB_HOST"],
             user=CONFIG["DB_USER"],
             password=CONFIG["DB_PASSWORD"],
-            host=CONFIG["DB_HOST"],
-            port=CONFIG["DB_PORT"],
-            database="auth"
+            pool_name="base_pool",
+            pool_size=8
         )
         print(colorama.Fore.GREEN + "SUCCESS: Established connection with base database")
     except Exception as e:
@@ -29,14 +27,12 @@ async def lifespan(app: FastAPI):
         print(colorama.Fore.RED + "ERROR: Failed to establish connection pool with base database, falling back on redundant database")
 
     try:
-        app.state.redundantConnectionPool = ThreadedConnectionPool(
-            1,
-            8,
-            user=CONFIG["DB_USER"],
-            password=CONFIG["DB_PASSWORD"],
-            host=CONFIG["DB_HOST"],
-            port=CONFIG["DB_PORT"],
-            database="auth"
+        app.state.redundantConnectionPool = MySQLConnectionPool(
+            host=CONFIG["REDUNDANT_HOST"],
+            user=CONFIG["REDUNDANT_USER"],
+            password=CONFIG["REDUNDANT_PASSWORD"],
+            pool_name="redundant_pool",
+            pool_size=8
         )
         print(colorama.Fore.GREEN + "SUCCESS: Established connection with redundant database")
     except Exception as e:
@@ -45,10 +41,12 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    if isinstance(app.state.baseConnectionPool, ThreadedConnectionPool):
-        app.state.baseConnectionPool.closeall()
-    if isinstance(app.state.redundantConnectionPool, ThreadedConnectionPool):
-        app.state.redundantConnectionPool.closeall()
+    if app.state.baseConnectionPool is not None:
+        app.state.baseConnectionPool._remove_connections()
+
+    if app.state.redundantConnectionPool is not None:
+        app.state.redundantConnectionPool._remove_connections()
+        
 
 
 app = FastAPI(lifespan=lifespan)

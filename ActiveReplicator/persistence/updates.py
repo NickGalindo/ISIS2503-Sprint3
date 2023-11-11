@@ -1,41 +1,38 @@
 from fastapi import HTTPException, status
-from psycopg2.pool import ThreadedConnectionPool
+from mysql.connector.pooling import MySQLConnectionPool
 
 from colorama import Fore
 
-async def run(redundantPool: ThreadedConnectionPool, basePool: ThreadedConnectionPool, com: str):
+async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool, com: str):
     result = None
 
     try:
-        assert(isinstance(basePool, ThreadedConnectionPool))
+        assert(isinstance(basePool, MySQLConnectionPool))
 
-        db_connection = basePool.getconn()
+        db_connection = basePool.get_connection()
         db_cursor = db_connection.cursor()
 
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
         db_cursor.close()
-        
-        basePool.putconn(db_connection)
+        db_connection.close()
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on base database, falling back to redundant database")
         print(e)
 
-    return None
 
     try:
-        assert(isinstance(redundantPool, ThreadedConnectionPool))
+        assert(isinstance(redundantPool, MySQLConnectionPool))
 
-        db_connection = redundantPool.getconn()
+        db_connection = redundantPool.get_connection()
         db_cursor = db_connection.cursor()
 
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
         db_cursor.close()
-
-        redundantPool.putconn(db_connection)
+        db_connection.close()
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on redundant database, no connection open")
         print(e)

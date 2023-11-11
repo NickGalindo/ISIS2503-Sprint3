@@ -1,22 +1,18 @@
 from fastapi import HTTPException, status
-from mysql.connector.pooling import MySQLConnectionPool
+from mysql.connector import connect
 
 from colorama import Fore
 
-async def query(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool, com: str):
+async def query(redundantPool, basePool, com: str):
     result = None
 
     try:
-        assert(isinstance(basePool, MySQLConnectionPool))
-
-        db_connection = basePool.get_connection()
-        db_cursor = db_connection.cursor()
+        db_cursor = basePool.cursor()
 
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
         db_cursor.close()
-        db_connection.close()
 
         return result
     except Exception as e:
@@ -25,16 +21,12 @@ async def query(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPoo
 
 
     try:
-        assert(isinstance(redundantPool, MySQLConnectionPool))
-
-        db_connection = redundantPool.get_connection()
-        db_cursor = db_connection.cursor()
+        db_cursor = redundantPool.cursor()
 
         db_cursor.execute(com)
         result = db_cursor.fetchall()
 
         db_cursor.close()
-        db_connection.close()
 
         return result
     except Exception as e:

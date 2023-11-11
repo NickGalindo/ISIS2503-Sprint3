@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from mysql.connector.pooling import MySQLConnectionPool
+from mysql.connector import connect
 import colorama
 
 import endpoints
@@ -14,13 +14,11 @@ colorama.init(autoreset=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        app.state.baseConnectionPool = MySQLConnectionPool(
+        app.state.baseConnectionPool = connect(
             host=CONFIG["DB_HOST"],
             user=CONFIG["DB_USER"],
             password=CONFIG["DB_PASSWORD"],
             database="auth",
-            pool_name="base_pool",
-            pool_size=8
         )
         print(colorama.Fore.GREEN + "SUCCESS: Established connection with base database")
     except Exception as e:
@@ -29,13 +27,11 @@ async def lifespan(app: FastAPI):
         print(e)
 
     try:
-        app.state.redundantConnectionPool = MySQLConnectionPool(
+        app.state.redundantConnectionPool = connect(
             host=CONFIG["REDUNDANT_HOST"],
             user=CONFIG["REDUNDANT_USER"],
             password=CONFIG["REDUNDANT_PASSWORD"],
             database="auth",
-            pool_name="redundant_pool",
-            pool_size=8
         )
         print(colorama.Fore.GREEN + "SUCCESS: Established connection with redundant database")
     except Exception as e:
@@ -46,10 +42,10 @@ async def lifespan(app: FastAPI):
     yield
 
     if app.state.baseConnectionPool is not None:
-        app.state.baseConnectionPool._remove_connections()
+        app.state.baseConnectionPool.close()
 
     if app.state.redundantConnectionPool is not None:
-        app.state.redundantConnectionPool._remove_connections()
+        app.state.redundantConnectionPool.close()
         
 
 

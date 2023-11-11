@@ -17,6 +17,8 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
 
         db_cursor.close()
         db_connection.close()
+
+        print(result)
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on base database, falling back to redundant database")
         print(e)
@@ -33,6 +35,8 @@ async def run(redundantPool: MySQLConnectionPool, basePool: MySQLConnectionPool,
 
         db_cursor.close()
         db_connection.close()
+
+        print(result)
     except Exception as e:
         print(Fore.RED + "ERROR: Failed to execute on redundant database, no connection open")
         print(e)

@@ -18,7 +18,7 @@ def getUser(username: str):
 
     print("ssssssss")
 
-    resp = requests.post(f"http://{QUERY_BALANCER_HOST}:8080/query", data={"q": q})
+    resp = requests.post(f"http://{QUERY_BALANCER_HOST}:8080/query", json={"q": q})
 
     print(resp.json())
 
@@ -29,7 +29,7 @@ def registerUser(username: str, name: str, password: str):
     
     com = f"INSERT INTO users (username, name, password) VALUES ({username}, {name}, {ps});"
 
-    resp = requests.post(f"http://{ACTIVE_REPLICATOR_HOST}:8080/run", data={"com": com})
+    resp = requests.post(f"http://{ACTIVE_REPLICATOR_HOST}:8080/run", json={"com": com})
 
     print(resp.json())
 
